@@ -1,1 +1,26 @@
+addons:
+    apt:
+        update: true
 
+
+language: c++
+
+before_install:
+    - sudo apt update
+    - sudo apt install valgrind
+    - sudo apt install cmake
+      # Установка gtest
+    - sudo apt install libgtest-dev 
+    - cd /usr/src/gtest 
+    - sudo cmake CMakeLists.txt || (cat CMakeFiles/CMakeError.log && CMakeFiles/CMakeOutput.log)
+    - sudo make
+    - sudo cp *.a /usr/lib
+    - cd -
+
+script:
+    - cmake CMakeLists.tt
+    - ls
+    - make
+
+after_script:
+    - make clean
