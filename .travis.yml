@@ -21,6 +21,7 @@ script:
     - cmake CMakeLists.txt
     - make
     - ls
+    - valgrind --leak-check=full -q .\tests_gtest
 
 after_script:
     - make clean
