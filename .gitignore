@@ -1,2 +1,5 @@
 #delete idea directory
 .idea/
+
+#delete debug directory
+cmake-build-debug/
