@@ -19,8 +19,8 @@ before_install:
 
 script:
     - cmake CMakeLists.txt
-    - ls
     - make
+    - ls
 
 after_script:
     - make clean
