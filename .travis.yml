@@ -1,12 +1,6 @@
 addons:
   apt:
     update: true
-        
-stages:
-  - make
-  - cppcheck
-  - memcheck
-  - gtest
 
 language: c++
 
