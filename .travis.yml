@@ -2,7 +2,7 @@ addons:
   apt:
     update: true
 
-language: c++
+language: cpp
 
 jobs:
   include:
@@ -18,21 +18,16 @@ jobs:
     - sudo make
     - sudo cp *.a /usr/lib
     - cd -
-
     before_script:
     - cmake CMakeLists.txt
     - make
     - ls
-
     - stage: "cppcheck"
       script: 
       - ls 
       - cppcheck -j4 --inconclusive --enable=all --language=c main.c post.c post.h input.c input.h
-
     - stage: "memcheck"
       script: valgrind --leak-check=full -q ./PersTask1 <test.txt
-
     - stage: "gtest"
       script: ./tests_gtest
-
     - after_script: make clean
