@@ -13,22 +13,22 @@ language: c++
 jobs:
   include:
     install:
-      - sudo apt update
-      - sudo apt install cppcheck
-      - sudo apt install valgrind
-      - sudo apt install cmake
-        # Установка gtest
-      - sudo apt install libgtest-dev 
-      - cd /usr/src/gtest 
-      - sudo cmake CMakeLists.txt || (cat CMakeFiles/CMakeError.log && CMakeFiles/CMakeOutput.log)
-      - sudo make
-      - sudo cp *.a /usr/lib
-      - cd -
+    - sudo apt update
+    - sudo apt install cppcheck
+    - sudo apt install valgrind
+    - sudo apt install cmake
+      # Установка gtest
+    - sudo apt install libgtest-dev 
+    - cd /usr/src/gtest 
+    - sudo cmake CMakeLists.txt || (cat CMakeFiles/CMakeError.log && CMakeFiles/CMakeOutput.log)
+    - sudo make
+    - sudo cp *.a /usr/lib
+    - cd -
 
-      before_script:
-        - cmake CMakeLists.txt
-        - make
-        - ls
+    before_script:
+    - cmake CMakeLists.txt
+    - make
+    - ls
 
     - stage: "cppchek"
       script: cppcheck -j4 --inconclusive --enable=all --language=c main.c post.c post.h input.c input.h
