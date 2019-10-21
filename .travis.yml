@@ -25,18 +25,21 @@ before_install:
     - cd -
 
 stage: make
-script:
+before_script:
     - cmake CMakeLists.txt
     - make
     - ls
     
 stage: cppcheck
+script:
     - cppcheck -j4 --inconclusive --enable=all --language=c main.c post.c post.h input.c input.h
     
-stage: memcheck 
+stage: memcheck
+script:
     - valgrind --leak-check=full -q ./PersTask1 <test.txt
     
 stage: gtest
+script:
     ./tests_gtest
 
 after_script:
