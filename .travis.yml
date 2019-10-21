@@ -11,36 +11,38 @@ stages:
 
 language: c++
 
-before_install:
-    - sudo apt update
-    - sudo apt install cppcheck
-    - sudo apt install valgrind
-    - sudo apt install cmake
-      # Установка gtest
-    - sudo apt install libgtest-dev 
-    - cd /usr/src/gtest 
-    - sudo cmake CMakeLists.txt || (cat CMakeFiles/CMakeError.log && CMakeFiles/CMakeOutput.log)
-    - sudo make
-    - sudo cp *.a /usr/lib
-    - cd -
+jobs:
+  include:
+    before_install:
+        - sudo apt update
+        - sudo apt install cppcheck
+        - sudo apt install valgrind
+        - sudo apt install cmake
+          # Установка gtest
+        - sudo apt install libgtest-dev 
+        - cd /usr/src/gtest 
+        - sudo cmake CMakeLists.txt || (cat CMakeFiles/CMakeError.log && CMakeFiles/CMakeOutput.log)
+        - sudo make
+        - sudo cp *.a /usr/lib
+        - cd -
 
-stage: make
-before_script:
-    - cmake CMakeLists.txt
-    - make
-    - ls
-    
-stage: cppcheck
-script:
-    - cppcheck -j4 --inconclusive --enable=all --language=c main.c post.c post.h input.c input.h
-    
-stage: memcheck
-script:
-    - valgrind --leak-check=full -q ./PersTask1 <test.txt
-    
-stage: gtest
-script:
-    ./tests_gtest
+    stage: make
+    before_script:
+        - cmake CMakeLists.txt
+        - make
+        - ls
 
-after_script:
-    - make clean
+    stage: cppcheck
+    script:
+        - cppcheck -j4 --inconclusive --enable=all --language=c main.c post.c post.h input.c input.h
+
+    stage: memcheck
+    script:
+        - valgrind --leak-check=full -q ./PersTask1 <test.txt
+
+    stage: gtest
+    script:
+        ./tests_gtest
+
+    after_script:
+        - make clean
