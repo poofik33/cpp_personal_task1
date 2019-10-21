@@ -25,8 +25,7 @@ before_script:
 jobs:
   include:    
     - stage: "cppcheck"
-      script: ls 
-      #- cppcheck -j4 --inconclusive --enable=all --language=c main.c post.c post.h input.c input.h
+      script: cppcheck -j4 --inconclusive --enable=all --language=c main.c post.c post.h input.c input.h
       
     - stage: "memcheck"
       script: valgrind --leak-check=full -q ./PersTask1 <test.txt
@@ -34,4 +33,4 @@ jobs:
     - stage: "gtest"
       script: ./tests_gtest
       
-    - after_script: make clean
+after_script: make clean
