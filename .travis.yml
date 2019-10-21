@@ -24,8 +24,9 @@ jobs:
     - make
     - ls
 
-    - stage: "cppchek"
-      script: ls 
+    - stage: "cppcheck"
+      script: 
+      - ls 
       - cppcheck -j4 --inconclusive --enable=all --language=c main.c post.c post.h input.c input.h
 
     - stage: "memcheck"
