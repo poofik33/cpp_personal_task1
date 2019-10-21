@@ -8,6 +8,8 @@ stages:
   - memcheck
   - gtest
 
+language: c++
+
 jobs:
   include:
     install:
@@ -23,7 +25,6 @@ jobs:
       - sudo cp *.a /usr/lib
       - cd -
 
-    - stage: "build"
       before_script:
         - cmake CMakeLists.txt
         - make
@@ -38,5 +39,4 @@ jobs:
     - stage: "gtest"
       script: ./tests_gtest
 
-    - after_script:
-        - make clean
+    - after_script: make clean
