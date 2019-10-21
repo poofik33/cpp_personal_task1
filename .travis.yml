@@ -24,8 +24,9 @@ jobs:
     - make
     - ls
 
-    #- stage: "cppchek"
-    #  script: cppcheck -j4 --inconclusive --enable=all --language=c main.c post.c post.h input.c input.h
+    - stage: "cppchek"
+      script: ls 
+      - cppcheck -j4 --inconclusive --enable=all --language=c main.c post.c post.h input.c input.h
 
     - stage: "memcheck"
       script: valgrind --leak-check=full -q ./PersTask1 <test.txt
