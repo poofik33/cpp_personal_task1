@@ -2,7 +2,6 @@
 // Created by poofik on 12.10.2019.
 //
 #include <gtest/gtest.h>
-#include <unordered_set>
 
 extern "C" {
 #include "post.h"

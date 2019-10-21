@@ -2,78 +2,92 @@
 // Created by poofik on 12.10.2019.
 //
 #include "post.h"
+#include "input.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 
 // функция создания массива постов через консольный ввод/вывод
-bool create(post **posts, size_t array_size) {
-    if (!posts) {
+bool create_posts_array(post **posts, size_t array_size) {
+    if (!posts || array_size == 0) {
         return false;
     }
-    *posts = (post*)malloc(sizeof(post) * array_size);
-    post *posts_array = *posts;
+    post *posts_array = (post*)malloc(sizeof(post) * array_size);
     if (!posts_array)
         return false;
+    *posts = posts_array;
     for (unsigned i = 0; i < array_size; i++) {
-        post *new_post = NULL;
-        bool success = create_post(&new_post);
+        bool success = create_post(&posts_array[i]);
         if (!success)
             return false;
-        memcpy(&posts_array[i], new_post, sizeof(post));
-        free(new_post);
     }
     return true;
 }
 
 // функция создания поста через консольный ввод/вывод
-bool create_post(post **new_post_p) {
-    if (!new_post_p) {
-        return false;
-    }
-    *new_post_p = (post*)malloc(sizeof(post));
-    post *new_post = *new_post_p;
-    if (!new_post) {
-        return false;
-    }
-    new_post->name = NULL;
-    new_post->content = NULL;
-    new_post->comments = NULL;
-    new_post->comments_count = 0;
-    new_post->ratings = NULL;
-    new_post->ratings_count = 0;
-    new_post->tags = NULL;
-    new_post->publication_date = NULL;
+bool create_post(post *new_post_p) {
+    new_post_p->name = NULL;
+    new_post_p->content = NULL;
+    new_post_p->comments = NULL;
+    new_post_p->comments_count = 0;
+    new_post_p->ratings = NULL;
+    new_post_p->ratings_count = 0;
+    new_post_p->tags = NULL;
+    new_post_p->publication_date = NULL;
+
     printf("Введите название поста\n");
     char *string = input_string();
     if (!string)
         return false;
-    new_post->name = string;
+    new_post_p->name = string;
+
     printf("Введите содержание поста\n");
     string = input_string();
     if (!string)
         return false;
-    new_post->content = string;
+    new_post_p->content = string;
+
     printf("Введите теги\n");
     string = input_string();
     if (!string)
         return false;
-    new_post->tags = string;
+    new_post_p->tags = string;
+
     printf("Введите дату публикации поста (формат: DD-MM-YYYY)\n");
     struct tm * date = input_date();
     if (!date) {
         return false;
     }
-    new_post->publication_date = date;
+    new_post_p->publication_date = date;
+
+    bool success = create_comments_array(&new_post_p->comments, &new_post_p->comments_count, new_post_p->publication_date);
+    if (!success)
+        return false;
+
+    success = create_ratings_array(&new_post_p->ratings, &new_post_p->ratings_count, new_post_p->publication_date);
+    if (!success)
+        return false;
+
+    return true;
+}
+
+bool create_comments_array(struct comment **array_p, size_t *array_size, const struct tm *publication_date_p) {
+    if (!array_p || !array_size || !publication_date_p)
+        return false;
+
     printf("Введите количество комментариев\n");
-    size_t tmp = input_number();
-    new_post->comments_count = tmp;
-    struct comment *comment_array = (struct comment *)malloc(sizeof(struct comment) * tmp);
-    new_post->comments = comment_array;
-    for (unsigned i = 0; i < tmp; i++) {
+    *array_size = input_number();
+    struct comment *comment_array = (struct comment *)malloc(sizeof(struct comment) * *array_size);
+    *array_p = comment_array;
+    for (unsigned i = 0; i < *array_size; i++) {
         printf("Введите комментарий\n");
-        string = input_string();
+        char *string = input_string();
         if (!string)
             return false;
         comment_array[i].content = string;
         int diff_time = -1;
+        struct tm *date = NULL;
         while (diff_time < 0) {
             printf("Введите дату публикации комментария (формат: DD-MM-YYYY)\n");
             printf("Дата комментария не должна быть раньше даты публикации поста\n");
@@ -81,19 +95,24 @@ bool create_post(post **new_post_p) {
             if (!date) {
                 return false;
             }
-            diff_time = time_difference(date, new_post->publication_date);
+            diff_time = time_difference(date, publication_date_p);
             if (diff_time < 0)
                 free(date);
         }
         comment_array[i].date = date;
     }
+    return true;
+}
+
+bool create_ratings_array(struct rating **array_p, size_t *array_size, const struct tm *publication_date_p) {
+    if (!array_p || !array_size || !publication_date_p)
+        return false;
 
     printf("Введите количество оценок\n");
-    tmp = input_number();
-    new_post->ratings_count = tmp;
-    struct rating *ratings_array = (struct rating *)malloc(sizeof(struct rating) * tmp);
-    new_post->ratings = ratings_array;
-    for (unsigned i = 0; i < tmp; i++) {
+    *array_size = input_number();
+    struct rating *ratings_array = (struct rating *)malloc(sizeof(struct rating) * *array_size);
+    *array_p = ratings_array;
+    for (unsigned i = 0; i < *array_size; i++) {
         int rank = -1;
         while(rank != 0 && rank != 1) {
             printf("Введите оценку (0 - dislike, 1 - like)\n");
@@ -101,6 +120,7 @@ bool create_post(post **new_post_p) {
         }
         ratings_array[i].rank = rank;
         int diff_time = -1;
+        struct tm *date = NULL;
         while (diff_time < 0) {
             printf("Введите дату выставления оценки (формат: DD-MM-YYYY)\n");
             printf("Дата оценки не должна быть раньше даты публикации поста\n");
@@ -108,7 +128,7 @@ bool create_post(post **new_post_p) {
             if (!date) {
                 return false;
             }
-            diff_time = time_difference(date, new_post->publication_date);
+            diff_time = time_difference(date, publication_date_p);
             if (diff_time < 0)
                 free(date);
         }
@@ -135,7 +155,7 @@ int time_difference(const struct tm *a, const struct tm *b) {
  * возвращается массив указателей на константные данные постов
  * */
 const post** get_popular_posts(const post *posts, size_t array_size, size_t *return_array_size) {
-    if (!posts || !return_array_size)
+    if (!posts || !return_array_size || array_size == 0)
         return NULL;
     const post **popular_posts = (const post **)malloc(sizeof(post *) * POPULAR_POSTS_COUNT);
     if (!popular_posts)
@@ -195,122 +215,7 @@ bool get_popularity(struct data *post_with_content) {
     return true;
 }
 
-char* input_string() {
-    int buffer_capacity = BUFFER_SIZE;
-    char *buffer = (char *)malloc(sizeof(char) * buffer_capacity);
-    if (!buffer)
-        return NULL;
-    char *chunk = (char *)malloc(sizeof(char) * CHUNK_SIZE);
-    if (!chunk) {
-        free(buffer);
-        return NULL;
-    }
-    char *buffer_p = buffer;
-    unsigned int buffer_real_size = 0;
-    unsigned int chunk_size = 1;
-    chunk[0] = '\0';
-    while(chunk[chunk_size - 1] != '\n' && fgets(chunk, CHUNK_SIZE, stdin)) {
-        chunk_size = strlen(chunk);
-        if (buffer_real_size + chunk_size >= buffer_capacity) {
-            buffer_capacity *= 2;
-            char *new_buffer_p = (char *)realloc(buffer ,sizeof(char) * buffer_capacity);
-            if(!new_buffer_p) {
-                free(chunk);
-                free(buffer);
-                return NULL;
-            }
-            buffer = new_buffer_p;
-            buffer_p = buffer + buffer_real_size;
-        }
-        buffer_real_size += chunk_size;
-        memcpy(buffer_p, chunk, chunk_size);
-        buffer_p += chunk_size;
-    }
-    free(chunk);
-    char *new_string = (char *)realloc(buffer, sizeof(char) * (buffer_real_size + 1));
-    if (!new_string) {
-        free(buffer);
-        return 0;
-    }
-    if (!buffer_real_size)
-        new_string[buffer_real_size] = '\n';
-    else
-        new_string[buffer_real_size] = '\0';
-    return new_string;
-}
-
-struct tm * input_date() {
-    char* date_string_p = NULL;
-    char* tmp = input_string();
-    if (!tmp)
-        return NULL;
-    date_string_p = (char *)realloc(tmp, sizeof(char) * DATE__FORMAT_SIZE + 1);
-    date_string_p[DATE__FORMAT_SIZE] = '\0';
-    if(strlen(date_string_p) != DATE__FORMAT_SIZE) {
-        free(date_string_p);
-        return NULL;
-    }
-    tmp = date_string_p;
-    bool correct_date_input = 1;
-    char* str_int = (char *)malloc(sizeof(char) * (DAY_FORMAT + 1));
-    if (!str_int) {
-        free(date_string_p);
-        return NULL;
-    }
-    memcpy(str_int, tmp, 2);
-    str_int[DAY_FORMAT] = '\0';
-    int day = atoi(str_int);
-    correct_date_input = correct_date_input && (day <= MAX_DAY_VALUE || day >= MIN_DAY_VALUE);
-    tmp += DAY_FORMAT + 1;
-    memcpy(str_int, tmp, 2);
-    str_int[MONTH_FORMAT] = '\0';
-    int month = atoi(str_int);
-    correct_date_input = correct_date_input && (month <= MAX_MONTH_VALUE || month >= MIN_MONTH_VALUE);
-    tmp += MONTH_FORMAT + 1;
-    char* str_year = realloc(str_int, sizeof(char) * (YEAR_FORMAT + 1));
-    if (!str_year) {
-        free(date_string_p);
-        free(str_int);
-        return NULL;
-    }
-    str_int = str_year;
-    memcpy(str_int, tmp, 4);
-    str_int[YEAR_FORMAT] = '\0';
-    int year = atoi(str_int);
-    correct_date_input = correct_date_input && (year >= MIN_YEAR_VALUE);
-    if (!correct_date_input) {
-        free(str_int);
-        free(date_string_p);
-        return NULL;
-    }
-    struct tm *date = (struct tm *)malloc(sizeof(struct tm));
-    if (!date) {
-        free(str_int);
-        free(date_string_p);
-        return NULL;
-    }
-    struct tm tmp_date = {
-            .tm_year = year - 1900,
-            .tm_mon = month - 1,
-            .tm_mday = day
-    };
-    *date = tmp_date;
-    free(str_int);
-    free(date_string_p);
-    return date;
-}
-
-int input_number() {
-    char* string = input_string();
-    char *end;
-    if (!string)
-        return 0;
-    int return_number = strtol(string, &end, 0);
-    free(string);
-    return return_number;
-}
-
-void delete_content(post *posts, size_t array_size) {
+void delete_posts(post *posts, size_t array_size) {
     if (!posts)
         return;
     for(unsigned i = 0; i < array_size; i++) {

@@ -9,7 +9,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++0x -Wall -ggdb3")
 
 set(LIB_SOURCE_FILES
         post.c
-        tests.c)
+        tests.c input.c input.h)
 
 add_library(work_with_posts STATIC ${LIB_SOURCE_FILES})
 
