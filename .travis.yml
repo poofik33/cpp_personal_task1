@@ -1,12 +1,19 @@
 addons:
     apt:
         update: true
+        
+stages:
+    - make
+    - cppcheck
+    - memcheck
+    - gtest
 
 
 language: c++
 
 before_install:
     - sudo apt update
+    - sudo apt install cppcheck
     - sudo apt install valgrind
     - sudo apt install cmake
       # Установка gtest
@@ -17,11 +24,20 @@ before_install:
     - sudo cp *.a /usr/lib
     - cd -
 
+stage: make
 script:
     - cmake CMakeLists.txt
     - make
     - ls
-    - valgrind --leak-check=full -q ./tests_gtest
+    
+stage: cppcheck
+    - cppcheck -j4 --inconclusive --enable=all --language=c main.c post.c post.h input.c input.h
+    
+stage: memcheck 
+    - valgrind --leak-check=full -q ./PersTask1 <test.txt
+    
+stage: gtest
+    ./tests_gtest
 
 after_script:
     - make clean
