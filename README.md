@@ -1,6 +1,7 @@
 # Personal task 1 in C++ course
 
-[![Build Status](https://travis-ci.org/poofik33/cpp_personal_task1.svg?branch=for_check)](https://travis-ci.org/poofik33/cpp_personal_task1) 
+[![Build Status](https://travis-ci.org/poofik33/cpp_personal_task1.svg?branch=for_check)](https://travis-ci.org/poofik33/cpp_personal_task1)
+[![codecov](https://codecov.io/gh/codecov/example-cpp11-cmake/branch/master/graph/badge.svg)](https://codecov.io/gh/poofik33/cpp_personal_task1)
 
  Постников Александр АПО-11
  
