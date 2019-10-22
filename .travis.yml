@@ -23,7 +23,7 @@ jobs:
     - stage: "memcheck"
       script: valgrind --leak-check=full -q ./PersTask1 <test.txt
       
-    - stage: "gtest
+    - stage: "gtest"
       before_script:
       # Установка gtest
       - cd /usr/src/gtest 
