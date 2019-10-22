@@ -10,10 +10,18 @@ addons:
 
 language: cpp
 
+before_install:
+# Установка gtest
+- cd /usr/src/gtest 
+- sudo cmake CMakeLists.txt || (cat CMakeFiles/CMakeError.log && CMakeFiles/CMakeOutput.log)
+- sudo make
+- sudo cp *.a /usr/lib
+- cd -
+
 before_script:
-  - cmake CMakeLists.txt
-  - make
-  - ls
+- cmake CMakeLists.txt
+- make
+- ls
     
 jobs:
   include:    
@@ -24,13 +32,6 @@ jobs:
       script: valgrind --leak-check=full -q ./PersTask1 <test.txt
       
     - stage: "gtest"
-      before_script:
-      # Установка gtest
-      - cd /usr/src/gtest 
-      - sudo cmake CMakeLists.txt || (cat CMakeFiles/CMakeError.log && CMakeFiles/CMakeOutput.log)
-      - sudo make
-      - sudo cp *.a /usr/lib
-      - cd -
       script: ./tests_gtest
       after_success:
       - lcov --directory . --capture --output-file coverage.info
