@@ -1,16 +1,17 @@
 addons:
   apt:
     update: true
+    packages:
+    - cppcheck
+    - valgrind
+    - cmake
+    - libgtest-dev
+    - lcov
 
 language: cpp
 
 before_install:
-  - sudo apt update
-  - sudo apt install cppcheck
-  - sudo apt install valgrind
-  - sudo apt install cmake
     # Установка gtest
-  - sudo apt install libgtest-dev 
   - cd /usr/src/gtest 
   - sudo cmake CMakeLists.txt || (cat CMakeFiles/CMakeError.log && CMakeFiles/CMakeOutput.log)
   - sudo make
