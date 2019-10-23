@@ -3,3 +3,6 @@
 
 #delete debug directory
 cmake-build-debug/
+
+#delete coverage.info from lcov
+coverage.info
