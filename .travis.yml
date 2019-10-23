@@ -26,10 +26,10 @@ before_script:
 jobs:
   include:    
     - stage: "cppcheck"
-      script: cppcheck -j4 --inconclusive --enable=all --language=c main.c post.c post.h input.c input.h
+      script: cppcheck -j4 --inconclusive --error-exitcode=1 --language=c main.c post.c post.h input.c input.h
       
     - stage: "memcheck"
-      script: valgrind --leak-check=full -q ./PersTask1 <test.txt
+      script: valgrind --error-exitcode=1 --leak-check=full -q ./PersTask1 <test.txt
       
     - stage: "gtest"
       script: ./tests_gtest
