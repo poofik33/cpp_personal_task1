@@ -1,6 +1,3 @@
-//
-// Created by poofik on 12.10.2019.
-//
 #include <gtest/gtest.h>
 
 extern "C" {

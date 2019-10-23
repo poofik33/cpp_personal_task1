@@ -1,6 +1,3 @@
-//
-// Created by poofik on 12.10.2019.
-//
 #include "post.h"
 #include "input.h"
 #include <stdio.h>
@@ -61,7 +58,8 @@ bool create_post(post *new_post_p) {
     }
     new_post_p->publication_date = date;
 
-    bool success = create_comments_array(&new_post_p->comments, &new_post_p->comments_count, new_post_p->publication_date);
+    bool success = create_comments_array(
+            &new_post_p->comments, &new_post_p->comments_count, new_post_p->publication_date);
     if (!success)
         return false;
 

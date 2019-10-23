@@ -1,6 +1,3 @@
-//
-// Created by poofik on 12.10.2019.
-//
 #include "tests.h"
 
 struct tm date01012019 = {

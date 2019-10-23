@@ -1,7 +1,3 @@
-//
-// Created by poofik on 12.10.2019.
-//
-
 #ifndef PERSTASK1_POST_H
 #define PERSTASK1_POST_H
 

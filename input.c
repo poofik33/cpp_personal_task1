@@ -1,7 +1,3 @@
-//
-// Created by poofik on 20.10.2019.
-//
-
 #include "input.h"
 #include <stdbool.h>
 #include <stdio.h>

@@ -1,7 +1,3 @@
-//
-// Created by poofik on 20.10.2019.
-//
-
 #ifndef TEST_GTEST_INPUT_H
 #define TEST_GTEST_INPUT_H
 

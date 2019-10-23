@@ -1,7 +1,3 @@
-//
-// Created by poofik on 12.10.2019.
-//
-
 #ifndef TEST_GTEST_TESTS_H
 #define TEST_GTEST_TESTS_H
 
@@ -15,8 +11,6 @@ bool initialize_test3();
 bool initialize_test4();
 
 void destruct_test();
-
-
 
 post *test_array;
 post *result_array;
