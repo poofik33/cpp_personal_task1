@@ -77,6 +77,8 @@ bool create_comments_array(struct comment **array_p, size_t *array_size, const s
     printf("Введите количество комментариев\n");
     *array_size = input_number();
     struct comment *comment_array = (struct comment *)malloc(sizeof(struct comment) * *array_size);
+    if (!comment_array)
+        return false;
     *array_p = comment_array;
     for (unsigned i = 0; i < *array_size; i++) {
         printf("Введите комментарий\n");
@@ -109,6 +111,8 @@ bool create_ratings_array(struct rating **array_p, size_t *array_size, const str
     printf("Введите количество оценок\n");
     *array_size = input_number();
     struct rating *ratings_array = (struct rating *)malloc(sizeof(struct rating) * *array_size);
+    if (!ratings_array)
+        return false;
     *array_p = ratings_array;
     for (unsigned i = 0; i < *array_size; i++) {
         int rank = -1;
