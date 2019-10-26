@@ -1,0 +1,36 @@
+cmake_minimum_required(VERSION 3.12)
+project(PersTask2 C)
+project(tests_gtest CXX)
+
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "-g -O0 -Wall -fprofile-arcs -ftest-coverage")
+set(CMAKE_C_FLAGS "-g -O0 -Wall -W -fprofile-arcs -ftest-coverage")
+set(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage")
+
+set(LIB_SOURCE_FILES matrix.c input.c)
+add_library(work_with_matrix STATIC ${LIB_SOURCE_FILES})
+add_executable(PersTask2 main.c)
+target_link_libraries(PersTask2 work_with_matrix)
+
+set(PARALLEL_LIB_SOURCE_FILES parallel_matrix.c input.c)
+add_library(parallel_work_with_matrix SHARED ${PARALLEL_LIB_SOURCE_FILES})
+add_executable(ParallelPersTask2 main.c)
+target_link_libraries(ParallelPersTask2 parallel_work_with_matrix)
+
+find_package(GTest REQUIRED)
+include_directories(${GTEST_INCLUDE_DIRS})
+add_executable(tests_gtest test_gtest.cpp)
+target_link_libraries(tests_gtest ${GTEST_LIBRARIES} pthread)
+target_link_libraries(tests_gtest work_with_matrix)
+
+add_executable(parallel_tests_gtest test_gtest.cpp)
+target_link_libraries(parallel_tests_gtest ${GTEST_LIBRARIES} pthread)
+target_link_libraries(parallel_tests_gtest parallel_work_with_matrix)
+
+enable_testing()
+add_test(gtest ${EXECUTABLE_OUTPUT_PATH}/tests_gtest)
+add_test(parallel_gtest ${EXECUTABLE_OUTPUT_PATH}/parallel_tests_gtest)
+add_definitions(-fprofile-arcs -ftest-coverage)
+target_link_libraries(tests_gtest -fprofile-arcs)
