@@ -8,6 +8,8 @@ addons:
     - libgtest-dev
     - lcov
 
+env:
+  - DIR=PT1
 language: cpp
 
 before_install:
@@ -19,6 +21,7 @@ before_install:
 - cd -
 
 before_script:
+- cd $DIR
 - cmake CMakeLists.txt
 - make
 - ls

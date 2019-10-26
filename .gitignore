@@ -1,8 +1,8 @@
 #delete idea directory
-.idea/
+**/.idea/
 
 #delete debug directory
-cmake-build-debug/
+**/cmake-build-debug/
 
 #delete coverage.info from lcov
-coverage.info
+**/coverage.info
