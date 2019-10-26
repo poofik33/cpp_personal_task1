@@ -1,7 +1,7 @@
 # Personal tasks in C++ course
 
-[![Build Status](https://travis-ci.org/poofik33/cpp_personal_tasks.svg?branch=master)](https://travis-ci.org/poofik33/cpp_personal_tasks)
-[![codecov](https://codecov.io/gh/poofik33/cpp_personal_tasks/branch/master/graph/badge.svg)](https://codecov.io/gh/poofik33/cpp_personal_tasks)
+[![Build Status](https://travis-ci.org/poofik33/cpp_personal_tasks.svg?branch=for_pt2_check)](https://travis-ci.org/poofik33/cpp_personal_tasks)
+[![codecov](https://codecov.io/gh/poofik33/cpp_personal_tasks/branch/for_pt2_check/graph/badge.svg)](https://codecov.io/gh/poofik33/cpp_personal_tasks)
 
  # Постников Александр АПО-11
  
