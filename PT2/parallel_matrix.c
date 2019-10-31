@@ -10,9 +10,11 @@ bool input_matrix(int **matrix_p, size_t *width, size_t *heigth, FILE *stream) {
     if (!matrix_p)
         return false;
 
-    printf("Введите ширину матрицы\n");
+    if (stream == stdin)
+        printf("Введите ширину матрицы\n");
     *width = input_number(stream);
-    printf("Введите высоту матрицы\n");
+    if (stream == stdin)
+        printf("Введите высоту матрицы\n");
     *heigth = input_number(stream);
 
     int *new_matrix = (int*)malloc(*heigth * *width * sizeof(int));
