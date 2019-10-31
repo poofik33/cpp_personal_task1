@@ -1,11 +1,9 @@
 #include "input.h"
-#include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 
-char* input_string() {
+char* input_string(FILE *stream) {
     int buffer_capacity = BUFFER_SIZE;
     char *buffer = (char *)malloc(sizeof(char) * buffer_capacity);
     if (!buffer)
@@ -19,7 +17,7 @@ char* input_string() {
     unsigned int buffer_real_size = 0;
     unsigned int chunk_size = 1;
     chunk[0] = '\0';
-    while(chunk[chunk_size - 1] != '\n' && fgets(chunk, CHUNK_SIZE, stdin)) {
+    while(chunk[chunk_size - 1] != '\n' && fgets(chunk, CHUNK_SIZE, stream)) {
         chunk_size = strlen(chunk);
         if (buffer_real_size + chunk_size >= buffer_capacity) {
             buffer_capacity *= 2;
@@ -49,8 +47,8 @@ char* input_string() {
     return new_string;
 }
 
-int input_number() {
-    char* string = input_string();
+int input_number(FILE *stream) {
+    char* string = input_string(stream);
     char *end;
     if (!string)
         return 0;

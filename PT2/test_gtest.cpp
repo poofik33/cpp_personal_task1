@@ -1,3 +1,4 @@
+#include <fstream>
 #include <gtest/gtest.h>
 
 extern "C" {
@@ -40,6 +41,28 @@ TEST(BAD_INPUT, zero_heigth) {
     bool success = side_matrix_reflection(matrix, 2, 0);
     EXPECT_FALSE(success);
     delete[] matrix;
+}
+
+TEST(INPUT_TEST, testing_input_function) {
+    std::ofstream test_file;
+    test_file.open("test.txt");
+    test_file << "3\n4\n";
+    for (int i = 1; i < 13; i++)
+        test_file << i << std::endl;
+    test_file.close();
+
+    FILE *test_file_c = fopen("test.txt", "r");
+    size_t test_width, test_heigth;
+    int *test_matrix = nullptr;
+    input_matrix(&test_matrix, &test_width, &test_heigth, test_file_c);
+    EXPECT_EQ(test_width, 3);
+    EXPECT_EQ(test_heigth, 4);
+    for (int i = 0; i < 12; i++)
+        EXPECT_EQ(test_matrix[i], i+1);
+
+    free(test_matrix);
+    fclose(test_file_c);
+    remove("test.txt");
 }
 
 TEST(FUNCTIONAL_TEST, matrix_2x2) {

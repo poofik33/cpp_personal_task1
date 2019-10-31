@@ -1,16 +1,17 @@
 #include "matrix.h"
 
 #include "input.h"
-#include <stdio.h>
 
-bool input_matrix(int **matrix_p, size_t *width, size_t *heigth) {
+bool input_matrix(int **matrix_p, size_t *width, size_t *heigth, FILE *stream) {
     if (!matrix_p)
         return false;
 
-    printf("Введите ширину матрицы\n");
-    *width = input_number();
-    printf("Введите высоту матрицы\n");
-    *heigth = input_number();
+    if (stream == stdin)
+        printf("Введите ширину матрицы\n");
+    *width = input_number(stream);
+    if (stream == stdin)
+        printf("Введите высоту матрицы\n");
+    *heigth = input_number(stream);
 
     int *new_matrix = (int*)malloc(*heigth * *width * sizeof(int));
     if (!new_matrix)
@@ -19,7 +20,7 @@ bool input_matrix(int **matrix_p, size_t *width, size_t *heigth) {
 
     for (size_t i = 0; i < *heigth; i++) {
         for (size_t j = 0; j < *width; j++) {
-            new_matrix[*width * i + j] = input_number();
+            new_matrix[*width * i + j] = input_number(stream);
         }
     }
 

@@ -23,7 +23,7 @@
 int main(int argc, char *argv[]) {
     int *matrix = NULL;
     size_t width = 0, height = 0;
-    bool success = input_matrix(&matrix, &width, &height);
+    bool success = input_matrix(&matrix, &width, &height, stdin);
     if (!success)
         return EXIT_FAILURE;
 

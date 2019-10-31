@@ -45,9 +45,12 @@ jobs:
       - rm test.txt
       
     - stage: "gtest"
-      script: 
-      - ./tests_gtest
-      - ./parallel_tests_gtest
+      name: "Input test"
+      script: ./input_test
+      name: "Test singleprocess"
+      script: ./tests_gtest
+      name: "Test multiprocess"
+      script: ./parallel_tests_gtest
       after_success:
       - lcov --directory . --capture --output-file coverage.info
       - lcov --remove coverage.info '/usr/*' "${HOME}"'/.cache/*' --output-file coverage.info

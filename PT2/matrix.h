@@ -2,9 +2,10 @@
 #define PERSTASK2_MATRIX_H
 
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 
-bool input_matrix(int **matrix, size_t *width, size_t *heigth);
+bool input_matrix(int **matrix, size_t *width, size_t *heigth, FILE *stream);
 
 bool side_matrix_reflection(int * const matrix, size_t width, size_t heigth);
 
