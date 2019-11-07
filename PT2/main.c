@@ -15,8 +15,10 @@
  нескольких процессов с учетом оптимизации работы с кэш-памятью.
  */
 #include "matrix.h"
+#include <dlfcn.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 
@@ -26,16 +28,45 @@ int main(int argc, char *argv[]) {
     bool success = input_matrix(&matrix, &width, &height, stdin);
     if (!success)
         return EXIT_FAILURE;
+    int *copy_matrix = (int*)malloc(width * height * sizeof(int));
+    memcpy(copy_matrix, matrix, width * height * sizeof(int));
 
     clock_t begin = clock();
-    success = side_matrix_reflection(matrix, width, height);
-    if (!success)
+    success = serial_side_matrix_reflection(matrix, width, height);
+    if (!success) {
+        free(matrix);
+        free(copy_matrix);
         return EXIT_FAILURE;
+    }
     clock_t end = clock();
-
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-    printf("\n%f\n", time_spent);
+    printf("Single process algorithm working time: %f\n", time_spent);
+
+
     free(matrix);
+
+    void *library = dlopen("libparallel_work_with_matrix.so", RTLD_LAZY);
+    if (!library) {
+        free(copy_matrix);
+        return EXIT_FAILURE;
+    }
+
+    bool(*parallel_reflection)(int * const m, size_t w, size_t h) = dlsym(library, "parallel_side_matrix_reflection");
+    if (!parallel_reflection) {
+        free(copy_matrix);
+        return EXIT_FAILURE;
+    }
+    begin = clock();
+    success = parallel_reflection(copy_matrix, width, height);
+    if (!success) {
+        free(copy_matrix);
+        return EXIT_FAILURE;
+    }
+    end = clock();
+    time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("Multi process algorithm working time: %f\n", time_spent);
+
+    free(copy_matrix);
     return EXIT_SUCCESS;
 }
 

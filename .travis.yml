@@ -34,25 +34,22 @@ jobs:
       script:
       - python3 create_test.py 
       - valgrind --error-exitcode=1 --leak-check=full -q ./PersTask2 <test.txt
-      - valgrind --error-exitcode=1 --leak-check=full -q ./ParallelPersTask2 <test.txt
       - rm test.txt
 
     - name: "Stresstest"
       script:
       - python3 create_test_file.py
       - ./PersTask2 <test.txt
-      - ./ParallelPersTask2 <test.txt
       - rm test.txt
       
     - name: "Gtest"
       script: 
       - ./input_test
       - ./tests_gtest
-      - ./parallel_tests_gtest
       after_success:
       - lcov --directory . --capture --output-file coverage.info
       - lcov --remove coverage.info '/usr/*' "${HOME}"'/.cache/*' --output-file coverage.info
       - lcov --list coverage.info
       - bash <(curl -s https://codecov.io/bash) -f coverage.info || echo "Codecov did not collect coverage reports"
       
-after_script: make clean
+      after_script: make clean

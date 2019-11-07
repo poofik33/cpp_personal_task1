@@ -1,37 +1,12 @@
-#include "matrix.h"
+#include "parallel_matrix.h"
 
-#include "input.h"
+#include "matrix.h"
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <unistd.h>
 #include <wait.h>
 
-bool input_matrix(int **matrix_p, size_t *width, size_t *heigth, FILE *stream) {
-    if (!matrix_p)
-        return false;
-
-    if (stream == stdin)
-        printf("Введите ширину матрицы\n");
-    *width = input_number(stream);
-    if (stream == stdin)
-        printf("Введите высоту матрицы\n");
-    *heigth = input_number(stream);
-
-    int *new_matrix = (int*)malloc(*heigth * *width * sizeof(int));
-    if (!new_matrix)
-        return false;
-    *matrix_p = new_matrix;
-
-    for (size_t i = 0; i < *heigth; i++) {
-        for (size_t j = 0; j < *width; j++) {
-            new_matrix[*width * i + j] = input_number(stream);
-        }
-    }
-
-    return true;
-}
-
-bool side_matrix_reflection(int * const matrix, size_t width, size_t heigth) {
+bool parallel_side_matrix_reflection(int * const matrix, size_t width, size_t heigth) {
     if (!matrix || width <= 1 || heigth <= 1)
         return false;
 

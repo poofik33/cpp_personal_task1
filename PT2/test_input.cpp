@@ -48,7 +48,7 @@ TEST(FUNCTIONAL_TEST, INPUT_NUMBER_TEST) {
     FILE *test_file_c = fopen("test.txt", "r");
     int test_number = input_number(test_file_c);
     EXPECT_EQ(test_number, 150);
-    
+
     fclose(test_file_c);
     remove("test.txt");
 }

@@ -3,7 +3,7 @@
 #include "input.h"
 
 bool input_matrix(int **matrix_p, size_t *width, size_t *heigth, FILE *stream) {
-    if (!matrix_p)
+    if (!matrix_p || !width || !heigth)
         return false;
 
     if (stream == stdin)
@@ -27,7 +27,7 @@ bool input_matrix(int **matrix_p, size_t *width, size_t *heigth, FILE *stream) {
     return true;
 }
 
-bool side_matrix_reflection(int * const matrix, size_t width, size_t heigth) {
+bool serial_side_matrix_reflection(int * const matrix, size_t width, size_t heigth) {
     if (!matrix || width <= 1 || heigth <= 1)
         return false;
 

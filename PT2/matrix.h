@@ -7,7 +7,7 @@
 
 bool input_matrix(int **matrix, size_t *width, size_t *heigth, FILE *stream);
 
-bool side_matrix_reflection(int * const matrix, size_t width, size_t heigth);
+bool serial_side_matrix_reflection(int * const matrix, size_t width, size_t heigth);
 
 void swap(int * const a, int * const b);
 

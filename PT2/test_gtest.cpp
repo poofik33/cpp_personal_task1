@@ -1,9 +1,14 @@
+#include <dlfcn.h>
 #include <fstream>
 #include <gtest/gtest.h>
 
 extern "C" {
     #include "matrix.h"
+    #include "parallel_matrix.h"
 }
+
+bool (*parallel_reflection)(int * const, size_t, size_t);
+
                                       //can be matrix 4x6
 int matrix_6x4[24] = { 1,  2,  3,  4, // 1,  2,  3,  4,  5,  6,
                        5,  6,  7,  8, // 7,  8,  9, 10, 11, 12,
@@ -25,20 +30,20 @@ int check_matrix_4x6[24] = {22, 21, 20,  4,  5,  6,
                             19,  3,  2,  1, 23, 24};
 
 TEST(BAD_INPUT, null_ptr) {
-    bool success = side_matrix_reflection(NULL, 2, 2);
+    bool success = serial_side_matrix_reflection(NULL, 2, 2);
     EXPECT_FALSE(success);
 }
 
 TEST(BAD_INPUT, zero_width) {
     int *matrix = new int[4];
-    bool success = side_matrix_reflection(matrix, 0, 2);
+    bool success = serial_side_matrix_reflection(matrix, 0, 2);
     EXPECT_FALSE(success);
     delete[] matrix;
 }
 
 TEST(BAD_INPUT, zero_heigth) {
     int *matrix = new int[4];
-    bool success = side_matrix_reflection(matrix, 2, 0);
+    bool success = serial_side_matrix_reflection(matrix, 2, 0);
     EXPECT_FALSE(success);
     delete[] matrix;
 }
@@ -69,7 +74,7 @@ TEST(FUNCTIONAL_TEST, matrix_2x2) {
     int *matrix = new int[4];
     for (int i = 0; i < 4; i++)
         matrix[i] = i+1;
-    bool success = side_matrix_reflection(matrix, 2, 2);
+    bool success = serial_side_matrix_reflection(matrix, 2, 2);
     if (success) {
         int check_matrix[4] = {4, 2, 3, 1};
         for (int i = 0; i < 4; i++)
@@ -83,7 +88,7 @@ TEST(FUNCTIONAL_TEST, matrix_6x4) {
     int *matrix = new int[24];
     for (int i = 0; i < 24; i++)
         matrix[i] = i+1;
-    bool success = side_matrix_reflection(matrix, 4, 6);
+    bool success = serial_side_matrix_reflection(matrix, 4, 6);
     if (success) {
         for (int i = 0; i < 24; i++)
             EXPECT_EQ(check_matrix_6x4[i],matrix[i]);
@@ -96,7 +101,7 @@ TEST(FUNCTIONAL_TEST, matrix_4x6) {
     int *matrix = new int[24];
     for (int i = 0; i < 24; i++)
         matrix[i] = i+1;
-    bool success = side_matrix_reflection(matrix, 6, 4);
+    bool success = serial_side_matrix_reflection(matrix, 6, 4);
     if (success) {
         for (int i = 0; i < 24; i++)
             EXPECT_EQ(check_matrix_4x6[i],matrix[i]);
@@ -105,7 +110,92 @@ TEST(FUNCTIONAL_TEST, matrix_4x6) {
     delete [] matrix;
 }
 
+TEST(PARALLEL_FUNCTIONAL_TEST, matrix_2x2) {
+    int *matrix = new int[4];
+    for (int i = 0; i < 4; i++)
+        matrix[i] = i+1;
+    bool success = parallel_reflection(matrix, 2, 2);
+    if (success) {
+        int check_matrix[4] = {4, 2, 3, 1};
+        for (int i = 0; i < 4; i++)
+            EXPECT_EQ(check_matrix[i],matrix[i]);
+    } else
+        EXPECT_TRUE(success);
+    delete [] matrix;
+}
+
+TEST(PARALLEL_FUNCTIONAL_TEST, matrix_6x4) {
+    int *matrix = new int[24];
+    for (int i = 0; i < 24; i++)
+        matrix[i] = i+1;
+    bool success = parallel_reflection(matrix, 4, 6);
+    if (success) {
+        for (int i = 0; i < 24; i++)
+            EXPECT_EQ(check_matrix_6x4[i],matrix[i]);
+    } else
+        EXPECT_TRUE(success);
+    delete [] matrix;
+}
+
+TEST(PARALLEL_FUNCTIONAL_TEST, matrix_4x6) {
+    int *matrix = new int[24];
+    for (int i = 0; i < 24; i++)
+        matrix[i] = i+1;
+    bool success = parallel_reflection(matrix, 6, 4);
+    if (success) {
+        for (int i = 0; i < 24; i++)
+            EXPECT_EQ(check_matrix_4x6[i],matrix[i]);
+    } else
+        EXPECT_TRUE(success);
+    delete [] matrix;
+}
+
+TEST(COMPARE_FUNCTIONS_TEST, matrix_4x6) {
+    int *matrix = new int[24];
+    int *copy_matrix = new int[24];
+    for (int i = 0; i < 24; i++) {
+        matrix[i] = copy_matrix[i] = i + 1;
+    }
+    bool success_1 = serial_side_matrix_reflection(matrix, 6, 4);
+    bool success_2 = parallel_reflection(matrix, 6, 4);
+    if (success_1 && success_2) {
+        for (int i = 0; i < 24; i++)
+            EXPECT_EQ(copy_matrix[i],matrix[i]);
+    } else {
+        EXPECT_TRUE(success_1);
+        EXPECT_TRUE(success_2);
+    }
+    delete[] matrix;
+    delete[] copy_matrix;
+}
+
+TEST(COMPARE_FUNCTIONS_TEST, matrix_6x4) {
+    int *matrix = new int[24];
+    int *copy_matrix = new int[24];
+    for (int i = 0; i < 24; i++) {
+        matrix[i] = copy_matrix[i] = i + 1;
+    }
+    bool success_1 = serial_side_matrix_reflection(matrix, 4, 6);
+    bool success_2 = parallel_reflection(matrix, 4, 6);
+    if (success_1 && success_2) {
+        for (int i = 0; i < 24; i++)
+            EXPECT_EQ(copy_matrix[i],matrix[i]);
+    } else {
+        EXPECT_TRUE(success_1);
+        EXPECT_TRUE(success_2);
+    }
+    delete[] matrix;
+    delete[] copy_matrix;
+}
+
 int main(int argc, char** argv) {
+    void *library = dlopen("libparallel_work_with_matrix.so", RTLD_LAZY);
+    if (!library)
+        return EXIT_FAILURE;
+    void *func = dlsym(library, "parallel_side_matrix_reflection");
+    parallel_reflection = reinterpret_cast<bool(*)(int * const, size_t, size_t)>(func);
+    if (!parallel_reflection)
+        return EXIT_FAILURE;
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
