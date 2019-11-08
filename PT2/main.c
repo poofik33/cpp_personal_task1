@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 
     free(matrix);
 
-    void *library = dlopen("libparallel_work_with_matrix.so", RTLD_LAZY);
+    void *library = dlopen("./libparallel_work_with_matrix.so", RTLD_LAZY);
     if (!library) {
         free(copy_matrix);
         return EXIT_FAILURE;

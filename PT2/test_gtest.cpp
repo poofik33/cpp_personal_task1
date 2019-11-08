@@ -9,6 +9,21 @@ extern "C" {
 
 bool (*parallel_reflection)(int * const, size_t, size_t);
 
+class DynamicLibraryEnvironment : public ::testing::Environment {
+public:
+    virtual ~DynamicLibraryEnvironment() {}
+
+    void SetUp() override {
+        void *library = dlopen("./libparallel_work_with_matrix.so", RTLD_LAZY);
+        if (!library)
+            EXPECT_TRUE(library);
+        void *func = dlsym(library, "parallel_side_matrix_reflection");
+        parallel_reflection = reinterpret_cast<bool(*)(int * const, size_t, size_t)>(func);
+        if (!parallel_reflection)
+            EXPECT_TRUE(parallel_reflection);
+    }
+};
+
                                       //can be matrix 4x6
 int matrix_6x4[24] = { 1,  2,  3,  4, // 1,  2,  3,  4,  5,  6,
                        5,  6,  7,  8, // 7,  8,  9, 10, 11, 12,
@@ -189,13 +204,7 @@ TEST(COMPARE_FUNCTIONS_TEST, matrix_6x4) {
 }
 
 int main(int argc, char** argv) {
-    void *library = dlopen("libparallel_work_with_matrix.so", RTLD_LAZY);
-    if (!library)
-        return EXIT_FAILURE;
-    void *func = dlsym(library, "parallel_side_matrix_reflection");
-    parallel_reflection = reinterpret_cast<bool(*)(int * const, size_t, size_t)>(func);
-    if (!parallel_reflection)
-        return EXIT_FAILURE;
     ::testing::InitGoogleTest(&argc, argv);
+    ::testing::AddGlobalTestEnvironment(new DynamicLibraryEnvironment);
     return RUN_ALL_TESTS();
 }
